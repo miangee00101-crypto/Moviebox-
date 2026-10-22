@@ -24,24 +24,25 @@ builder.defineStreamHandler(async ({ type, id }) => {
     // TODO: replace these static URLs with your MovieBox scraper / API call
     // e.g. const directLinks = await scrapeMovieBoxLinks(id);
 
+    const base = "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264";
     const streams = [
       {
         name: "MovieBox",
         title: "🎬 1080p | Full HD\n⚡ Direct Server 1",
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        behaviorHints: {
-          notWebReady: true
-        }
+        url: `${base}/1080/Big_Buck_Bunny_1080_10s_1MB.mp4`,
+        behaviorHints: { notWebReady: true }
       },
       {
         name: "MovieBox",
         title: "🎬 720p | HD\n⚡ Direct Server 1",
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        url: `${base}/720/Big_Buck_Bunny_720_10s_1MB.mp4`,
+        behaviorHints: { notWebReady: true }
       },
       {
         name: "MovieBox",
         title: "🎬 480p | SD\n⚡ Direct Server 1",
-        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+        url: `${base}/360/Big_Buck_Bunny_360_10s_1MB.mp4`,
+        behaviorHints: { notWebReady: true }
       }
     ];
 
