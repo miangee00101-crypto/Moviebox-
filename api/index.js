@@ -1,7 +1,7 @@
 const express = require("express");
 const { addonBuilder, getRouter } = require("stremio-addon-sdk");
 
-// 1. Define Addon Manifest
+// 1. Addon Manifest
 const manifest = {
   id: "org.moviebox.stremio",
   version: "1.0.0",
@@ -9,19 +9,20 @@ const manifest = {
   description: "Direct MovieBox streams in 1080p, 720p, and 480p",
   resources: ["stream"],
   types: ["movie", "series"],
-  idPrefixes: ["tt"]
+  idPrefixes: ["tt"],
+  catalogs: []
 };
 
 const builder = new addonBuilder(manifest);
 
-// 2. Stream Handler logic
+// 2. Stream Handler
 builder.defineStreamHandler(async ({ type, id }) => {
-  // `id` is the IMDb ID (e.g., tt0111161) or episode format (e.g., tt0903747:1:1)
+  // id = IMDb ID (tt0111161) or episode format (tt0903747:1:1)
   console.log(`Requested streams for ${type}: ${id}`);
 
   try {
-    // TODO: Replace these static URLs with your MovieBox scraper logic / API call
-    // e.g., const directLinks = await scrapeMovieBoxLinks(id);
+    // TODO: replace these static URLs with your MovieBox scraper / API call
+    // e.g. const directLinks = await scrapeMovieBoxLinks(id);
 
     const streams = [
       {
@@ -29,10 +30,7 @@ builder.defineStreamHandler(async ({ type, id }) => {
         title: "🎬 1080p | Full HD\n⚡ Direct Server 1",
         url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         behaviorHints: {
-          notSupported: false,
-          requestHeaders: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-          }
+          notWebReady: true
         }
       },
       {
@@ -54,10 +52,10 @@ builder.defineStreamHandler(async ({ type, id }) => {
   }
 });
 
-// 3. Express Server Setup & Stremio Router Integration
+// 3. Express app + Stremio router
 const app = express();
 
-// CORS Headers enabling Stremio web & desktop clients
+// CORS for Stremio web & desktop clients
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "*");
@@ -65,18 +63,15 @@ app.use((req, res, next) => {
 });
 
 const addonInterface = builder.getInterface();
-const sdkRouter = getRouter(addonInterface);
+app.use("/", getRouter(addonInterface));
 
-// Mount the Stremio SDK router
-app.use("/", sdkRouter);
-
-// Local development listener
+// Local development only
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 7000;
   app.listen(PORT, () => {
-    console.log(`Addon running locally at http://localhost:${PORT}/manifest.json`);
+    console.log(`Addon running at http://localhost:${PORT}/manifest.json`);
   });
 }
 
-// Export Express app for Vercel Serverless Function
+// Vercel serverless export
 module.exports = app;
